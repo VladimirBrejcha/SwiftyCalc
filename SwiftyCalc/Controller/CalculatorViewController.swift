@@ -17,12 +17,20 @@ class CalculatorViewController: UIViewController {
     private var displayValue: Double {
         get {
             guard let number = Double(displayLabel.text!) else {
-                fatalError("Could not convert string into a double")
+                return 0
             }
             return number
         }
         set {
-            displayLabel.text = String(newValue)
+            
+            let isInt = floor(newValue) == newValue
+            
+            if !isInt {
+                displayLabel.text = String(newValue)
+            } else {
+                let anValue = String(format: "%.0f", newValue)
+                displayLabel.text = anValue
+            }
         }
     }
     
@@ -49,16 +57,18 @@ class CalculatorViewController: UIViewController {
         guard let numValue = sender.currentTitle else { return }
         
         if isFinishedTyping {
-            displayLabel.text = numValue
+            if numValue == "." {
+                displayLabel.text! += numValue
+            } else {
+                displayLabel.text = numValue
+            }
             isFinishedTyping = false
         } else {
-            
-            let isInt = floor(displayValue) == displayValue
-            
-            if !isInt {
-                return
+            if numValue == "." {
+                if displayLabel.text!.contains(".") {
+                    return
+                }
             }
-            
             displayLabel.text! += numValue
         }
     }
